@@ -1,5 +1,6 @@
-// app/Events/MessageSent.php
+<?php
 
+namespace App\Events;
 use App\User;
 use App\Message;
 use Illuminate\Broadcasting\Channel;
@@ -46,6 +47,6 @@ class MessageSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel('my-channel');
     }
 }

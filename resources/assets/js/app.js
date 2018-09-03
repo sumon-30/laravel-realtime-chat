@@ -29,6 +29,14 @@ const app = new Vue({
 
     created() {
         this.fetchMessages();
+        Echo.private('my-channel')
+        .listen('MessageSent', (e) => {
+            alert("new message");
+            this.messages.push({
+            message: e.message.message,
+            user: e.user
+            });
+        });
     },
 
     methods: {

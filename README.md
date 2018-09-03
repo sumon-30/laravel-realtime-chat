@@ -449,7 +449,8 @@ class MessageSent implements ShouldBroadcast
 }
 
 25. need to update the sendMessage() of ChatsController to broadcast the MessageSent event:
-
+//remember to use
+use App\Events\MessageSent;
 broadcast(new MessageSent($user, $message))->toOthers();
 
 26. Since we created a private channel, only authenticated users will be able to listen on the chat channel. So, we need a way to authorize that the currently authenticated user can actually listen on the channel. This can be done by in the routes/channels.php file:
@@ -473,7 +474,8 @@ Echo.private('chat')
     });
   });
 
-
+Reference
+https://pusher.com/tutorials/chat-laravel/
 
 when git clone 
 1. composer install
@@ -484,12 +486,13 @@ when git clone
 
 4. pusher data update in env
 
-5. Change PrivateChannel in MessageSent.php
+5. Change PrivateChannel in MessageSent.php  and app.js
 
-6. channels.php
+6. Change info in channels.php
 
 7. php artisan migrate
  
 8. npm run dev
 
 9. php artisan serve
+

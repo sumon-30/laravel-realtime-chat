@@ -11,6 +11,6 @@
 |
 */
 
-Broadcast::channel('chat_name', function ($user) {
+Broadcast::channel('my-channel', function ($user) {
     return Auth::check();
   });
