@@ -14029,12 +14029,26 @@ var app = new Vue({
 
         this.fetchMessages();
         Echo.private('my-channel').listen('MessageSent', function (e) {
-            alert("new message");
+            // alert("new message");
             _this.messages.push({
                 message: e.message.message,
                 user: e.user,
                 file_url: e.message.file_url,
                 file_type: e.message.file_type
+            });
+            if (!('Notification' in window)) {
+                alert('Web Notification is not supported');
+                return;
+            }
+
+            Notification.requestPermission(function (permission) {
+                var notification = new Notification('New message alert!', {
+                    body: e.message.message, // content for the alert
+                    icon: "https://pusher.com/static_logos/320x320.png" // optional image url
+                });
+                notification.onclick = function () {
+                    window.open(window.location.href);
+                };
             });
         });
     },
@@ -57253,23 +57267,30 @@ var render = function() {
                   _vm._v(
                     "\n                " +
                       _vm._s(message.message) +
-                      "\n                " +
-                      _vm._s(message.file_url) +
                       "\n            "
                   )
                 ]),
                 _vm._v(" "),
                 message.file_url
                   ? _c("p", { staticClass: "image is-4by3" }, [
-                      _c("img", {
-                        attrs: {
-                          src:
-                            "/storage/" +
-                            message.file_url +
-                            "." +
-                            message.file_type
-                        }
-                      })
+                      _c(
+                        "a",
+                        {
+                          staticClass: "icon fa-twitter",
+                          attrs: {
+                            href:
+                              "/storage/" +
+                              message.file_url +
+                              "." +
+                              message.file_type
+                          }
+                        },
+                        [
+                          _c("span", { staticClass: "label" }, [
+                            _vm._v(_vm._s(message.file_url))
+                          ])
+                        ]
+                      )
                     ])
                   : _vm._e()
               ]
@@ -57289,23 +57310,30 @@ var render = function() {
                 _vm._v(
                   "\n                " +
                     _vm._s(message.message) +
-                    "\n                 " +
-                    _vm._s(message.file_url) +
                     "\n            "
                 )
               ]),
               _vm._v(" "),
               message.file_url
                 ? _c("p", { staticClass: "image is-4by3" }, [
-                    _c("img", {
-                      attrs: {
-                        src:
-                          "/storage/" +
-                          message.file_url +
-                          "." +
-                          message.file_type
-                      }
-                    })
+                    _c(
+                      "a",
+                      {
+                        staticClass: "icon fa-twitter",
+                        attrs: {
+                          href:
+                            "/storage/" +
+                            message.file_url +
+                            "." +
+                            message.file_type
+                        }
+                      },
+                      [
+                        _c("span", { staticClass: "label" }, [
+                          _vm._v(_vm._s(message.file_url))
+                        ])
+                      ]
+                    )
                   ])
                 : _vm._e()
             ])
