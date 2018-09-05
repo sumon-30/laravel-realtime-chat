@@ -31,14 +31,29 @@ const app = new Vue({
         this.fetchMessages();
         Echo.private('my-channel')
         .listen('MessageSent', (e) => {
-            alert("new message");
+           // alert("new message");
             this.messages.push({
             message: e.message.message,
             user: e.user,
             file_url: e.message.file_url,
             file_type: e.message.file_type 
             });
+            if (! ('Notification' in window)) {
+                alert('Web Notification is not supported');
+                return;
+              }
+    
+              Notification.requestPermission( permission => {
+                let notification = new Notification('New message alert!', {
+                  body: e.message.message, // content for the alert
+                  icon: "https://pusher.com/static_logos/320x320.png" // optional image url
+                });
+                notification.onclick = () => {
+                    window.open(window.location.href);
+                  };
         });
+    });
+       
     },
 
     methods: {

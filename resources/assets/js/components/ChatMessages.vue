@@ -13,7 +13,8 @@
                     {{ message.message }}
                 </p>
                 <p class="image is-4by3" v-if="message.file_url">
-                     <img :src="'/storage/' + message.file_url + '.' +message.file_type " />
+                     <!-- <img :src="'/storage/' + message.file_url + '.' +message.file_type " /> -->
+                     <a :href="'/storage/' + message.file_url + '.' +message.file_type " class="icon fa-twitter"><span class="label">{{message.file_url}}</span></a>
                 </p>
             </div>
             <div class="chat-body clearfix" v-else>
@@ -27,7 +28,8 @@
                     {{ message.message }}
                 </p>
                 <p class="image is-4by3" v-if="message.file_url">
-                    <img :src="'/storage/' + message.file_url + '.' +message.file_type " />
+                   <!-- <img :src="'/storage/' + message.file_url + '.' +message.file_type " /> -->
+                     <a :href="'/storage/' + message.file_url + '.' +message.file_type " class="icon fa-twitter"><span class="label">{{message.file_url}}</span></a>
                 </p>
             </div>
         </li>
