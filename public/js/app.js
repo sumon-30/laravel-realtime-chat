@@ -14032,7 +14032,9 @@ var app = new Vue({
             alert("new message");
             _this.messages.push({
                 message: e.message.message,
-                user: e.user
+                user: e.user,
+                file_url: e.message.file_url,
+                file_type: e.message.file_type
             });
         });
     },
@@ -14043,13 +14045,23 @@ var app = new Vue({
             var _this2 = this;
 
             axios.get('/messages').then(function (response) {
+                console.log("messages");
+                console.log(response.data);
                 _this2.messages = response.data;
             });
         },
         addMessage: function addMessage(message) {
-            this.messages.push(message);
+            var formData = new FormData();
 
-            axios.post('/messages', message).then(function (response) {
+            console.log(message);
+            this.messages.push(message);
+            formData.append('message', message.message);
+            formData.append('file', message.file);
+            axios.post('/messages', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(function (response) {
                 console.log(response.data);
             });
         }
@@ -57183,9 +57195,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['messages']
+  props: ['messages', 'loginuser']
 });
 
 /***/ }),
@@ -57201,23 +57234,81 @@ var render = function() {
     { staticClass: "chat" },
     _vm._l(_vm.messages, function(message) {
       return _c("li", { staticClass: "left clearfix" }, [
-        _c("div", { staticClass: "chat-body clearfix" }, [
-          _c("div", { staticClass: "header" }, [
-            _c("strong", { staticClass: "primary-font" }, [
-              _vm._v(
-                "\n                    " +
-                  _vm._s(message.user.name) +
-                  "\n                "
-              )
-            ])
-          ]),
-          _vm._v(" "),
-          _c("p", [
-            _vm._v(
-              "\n                " + _vm._s(message.message) + "\n            "
+        _vm.loginuser.id == message.user.id
+          ? _c(
+              "div",
+              { staticClass: "chat-body clearfix", attrs: { align: "right" } },
+              [
+                _c("div", { staticClass: "header" }, [
+                  _c("strong", { staticClass: "primary-font" }, [
+                    _vm._v(
+                      "\n                   \n                    " +
+                        _vm._s(message.user.name) +
+                        "\n                "
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("p", [
+                  _vm._v(
+                    "\n                " +
+                      _vm._s(message.message) +
+                      "\n                " +
+                      _vm._s(message.file_url) +
+                      "\n            "
+                  )
+                ]),
+                _vm._v(" "),
+                message.file_url
+                  ? _c("p", { staticClass: "image is-4by3" }, [
+                      _c("img", {
+                        attrs: {
+                          src:
+                            "/storage/" +
+                            message.file_url +
+                            "." +
+                            message.file_type
+                        }
+                      })
+                    ])
+                  : _vm._e()
+              ]
             )
-          ])
-        ])
+          : _c("div", { staticClass: "chat-body clearfix" }, [
+              _c("div", { staticClass: "header" }, [
+                _c("strong", { staticClass: "primary-font" }, [
+                  _vm._v(
+                    "\n                   \n                    " +
+                      _vm._s(message.user.name) +
+                      "\n                "
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("p", [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(message.message) +
+                    "\n                 " +
+                    _vm._s(message.file_url) +
+                    "\n            "
+                )
+              ]),
+              _vm._v(" "),
+              message.file_url
+                ? _c("p", { staticClass: "image is-4by3" }, [
+                    _c("img", {
+                      attrs: {
+                        src:
+                          "/storage/" +
+                          message.file_url +
+                          "." +
+                          message.file_type
+                      }
+                    })
+                  ])
+                : _vm._e()
+            ])
       ])
     })
   )
@@ -57305,7 +57396,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
-            newMessage: ''
+            newMessage: '',
+            file: ''
         };
     },
 
@@ -57314,10 +57406,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         sendMessage: function sendMessage() {
             this.$emit('messagesent', {
                 user: this.user,
-                message: this.newMessage
+                message: this.newMessage,
+                file: this.file
             });
 
             this.newMessage = '';
+        },
+        handleFileUpload: function handleFileUpload() {
+            this.file = this.$refs.file.files[0];
         }
     }
 });
@@ -57363,6 +57459,16 @@ var render = function() {
             return
           }
           _vm.newMessage = $event.target.value
+        }
+      }
+    }),
+    _vm._v(" "),
+    _c("input", {
+      ref: "file",
+      attrs: { type: "file", id: "file" },
+      on: {
+        change: function($event) {
+          _vm.handleFileUpload()
         }
       }
     }),

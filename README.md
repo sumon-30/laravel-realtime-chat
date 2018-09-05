@@ -496,3 +496,75 @@ when git clone
 
 9. php artisan serve
 
+---------- Sent File with axios -------------
+1. create file input box in vue
+ <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+  sendMessage() {
+                this.$emit('messagesent', {
+                    user: this.user,
+                    message: this.newMessage,
+                    file: this.file
+                });
+
+                this.newMessage = ''
+            },
+            handleFileUpload(){
+                this.file = this.$refs.file.files[0];
+            }
+
+2. Sent file with axios in app.js
+   - when sent file with axios, need to declare headers: { 'Content-Type': 'multipart/form-data'}
+    addMessage(message) {
+            let formData = new FormData()
+
+            this.messages.push(message);
+            formData.append('message', message.message);
+            formData.append('file', message.file)
+            axios.post('/messages', formData,{
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+              }).then(response => {
+              console.log(response.data);
+            });
+        }
+
+3. Save file 
+- To create the symbolic link, use storage:link
+    By default, the public disk uses the local driver and stores these files in storage/app/public. To make them accessible from the web, you should create a symbolic link from public/storage to storage/app/public.
+
+  php artisan storage:link
+ 
+- Add file_url and file_type in message table migration
+    $table->string('file_url', 100)-> nullable();
+    $table->string('file_type', 45)-> nullable();
+
+- Add file_type and file_url fillable field in message model
+    protected $fillable = ['message','file_url','file_type']; 
+
+- Modify in Controller
+if ($request->hasFile('file'))
+        {
+            $file = $request->file;
+            $ext = $file->getClientOriginalExtension();
+            $fileName= explode('.'.$ext, $file->getClientOriginalName());
+
+            Storage::putFileAs('/public/' , $file, $fileName[0].'.' . $ext);
+        }
+  $message = $user->messages()->create([
+    'message' => $request->input('message'),
+    'file_url'=>$fileName[0],
+    'file_type'=>$ext
+  ]);
+
+- display image in vue
+<p class="image is-4by3" v-if="message.file_url">
+    <img :src="'/storage/' + message.file_url + '.' +message.file_type " />
+</p>
+
+
+https://pusher.com/tutorials/web-notifications-laravel-pusher-channels
+
+https://codeburst.io/upload-and-manage-files-with-laravel-and-vue-915378c8b2a4
+
+https://blog.usejournal.com/file-upload-with-laravel-and-vuejs-a70ae85e34a1
