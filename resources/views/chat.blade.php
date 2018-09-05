@@ -11,7 +11,7 @@
                 <div class="panel-heading">Chats</div>
 
                 <div class="panel-body">
-                    <chat-messages :messages="messages"></chat-messages>
+                    <chat-messages :messages="messages" :loginuser="{{ Auth::user() }}"></chat-messages>
                 </div>
                 <div class="panel-footer">
                     <chat-form

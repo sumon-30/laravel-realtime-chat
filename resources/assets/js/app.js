@@ -24,7 +24,7 @@ const app = new Vue({
     el: '#app',
 
     data: {
-        messages: []
+        messages: [],
     },
 
     created() {
@@ -34,7 +34,9 @@ const app = new Vue({
             alert("new message");
             this.messages.push({
             message: e.message.message,
-            user: e.user
+            user: e.user,
+            file_url: e.message.file_url,
+            file_type: e.message.file_type 
             });
         });
     },
@@ -42,14 +44,24 @@ const app = new Vue({
     methods: {
         fetchMessages() {
             axios.get('/messages').then(response => {
+                console.log("messages");
+                console.log(response.data);
                 this.messages = response.data;
             });
         },
-
+        
         addMessage(message) {
-            this.messages.push(message);
+            let formData = new FormData()
 
-            axios.post('/messages', message).then(response => {
+            console.log(message);
+            this.messages.push(message);
+            formData.append('message', message.message);
+            formData.append('file', message.file)
+            axios.post('/messages', formData,{
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+              }).then(response => {
               console.log(response.data);
             });
         }
