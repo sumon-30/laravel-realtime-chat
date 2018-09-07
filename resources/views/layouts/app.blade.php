@@ -23,12 +23,15 @@
             list-style: none;
             margin: 0;
             padding: 0;
+            background-color: wheat
         }
 
         .chat li {
             margin-bottom: 10px;
             padding-bottom: 5px;
+            padding-right: 10px;
             border-bottom: 1px dotted #B3A9A9;
+            
         }
 
         .chat li .chat-body p {
@@ -86,11 +89,12 @@
                                 <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                             </li>
                         @else
+                            <input type="hidden" name="auth_user_id" value= {{Auth::user()->id}} >
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
-
+                                
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();

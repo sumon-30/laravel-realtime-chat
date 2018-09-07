@@ -568,3 +568,7 @@ https://pusher.com/tutorials/web-notifications-laravel-pusher-channels
 https://codeburst.io/upload-and-manage-files-with-laravel-and-vue-915378c8b2a4
 
 https://blog.usejournal.com/file-upload-with-laravel-and-vuejs-a70ae85e34a1
+
+https://www.sitepoint.com/add-real-time-notifications-laravel-pusher/
+
+https://laracasts.com/discuss/channels/vue/laravel-mark-message-is-seen-for-users

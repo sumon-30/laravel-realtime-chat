@@ -11,7 +11,7 @@ class Message extends Model
      *
      * @var array
      */
-    protected $fillable = ['message','file_url','file_type'];
+    protected $fillable = ['message','file_url','file_type','receive_user_id'];
 
     // app/Message.php
 

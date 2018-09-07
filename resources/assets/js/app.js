@@ -19,16 +19,20 @@ window.Vue = require('vue');
 
 Vue.component('chat-messages', require('./components/ChatMessages.vue'));
 Vue.component('chat-form', require('./components/ChatForm.vue'));
-
+Vue.component('user', require('./components/user.vue'));
 const app = new Vue({
     el: '#app',
 
     data: {
         messages: [],
+        users: [],
+        chatUserId: '',
+        receiveMessage: 0 ,
     },
 
     created() {
         this.fetchMessages();
+        this.fetchUsers();
         Echo.private('my-channel')
         .listen('MessageSent', (e) => {
            // alert("new message");
@@ -38,20 +42,36 @@ const app = new Vue({
             file_url: e.message.file_url,
             file_type: e.message.file_type 
             });
-            if (! ('Notification' in window)) {
-                alert('Web Notification is not supported');
-                return;
-              }
-    
-              Notification.requestPermission( permission => {
-                let notification = new Notification('New message alert!', {
-                  body: e.message.message, // content for the alert
-                  icon: "https://pusher.com/static_logos/320x320.png" // optional image url
+            console.log('chatUserId');
+            console.log(this.chatUserId);
+            console.log('sent_user_id');
+            console.log(e.user.id);
+            //check auth_user_id = receive_user_id
+            if(localStorage.getItem('login_user_id') == e.message.receive_user_id){
+
+                //check auth_user_id chat with sent_user_id
+                if(this.chatUserId == e.user.id){
+                    //to make seen
+                }else{
+                    this.receiveMessage += 1;
+                }
+                
+                if (! ('Notification' in window)) {
+                    alert('Web Notification is not supported');
+                    return;
+                  }
+        
+                  Notification.requestPermission( permission => {
+                    let notification = new Notification('New message alert!', {
+                      body: e.message.message, // content for the alert
+                      icon: "https://pusher.com/static_logos/320x320.png" // optional image url
+                    });
+                    notification.onclick = () => {
+                        window.open(window.location.href);
+                      };
                 });
-                notification.onclick = () => {
-                    window.open(window.location.href);
-                  };
-        });
+            }
+           
     });
        
     },
@@ -59,9 +79,23 @@ const app = new Vue({
     methods: {
         fetchMessages() {
             axios.get('/messages').then(response => {
-                console.log("messages");
-                console.log(response.data);
+                
                 this.messages = response.data;
+            });
+        },
+        fetchMessagesWithUser(id) {
+            console.log(id);
+            
+            let userid = id.id;
+            this.chatUserId = userid;
+            axios.get('/messagesWithUsers/'+userid).then(response => {
+                
+                this.messages = response.data;
+            });
+        },
+        fetchUsers() {
+            axios.get('/users').then(response => {
+                this.users = response.data;
             });
         },
         
@@ -71,7 +105,9 @@ const app = new Vue({
             console.log(message);
             this.messages.push(message);
             formData.append('message', message.message);
-            formData.append('file', message.file)
+            formData.append('file', message.file);
+            formData.append('receive_user_id', this.chatUserId)
+            console.log(this.chatUserId);
             axios.post('/messages', formData,{
                 headers: {
                     'Content-Type': 'multipart/form-data'

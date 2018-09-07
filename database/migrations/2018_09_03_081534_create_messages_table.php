@@ -19,6 +19,7 @@ class CreateMessagesTable extends Migration
             $table->text('message');
             $table->string('file_url', 100)-> nullable();
             $table->string('file_type', 45)-> nullable();
+            $table->integer('receive_user_id')->unsigned();
             $table->timestamps();
           });
     }

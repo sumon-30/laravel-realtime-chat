@@ -2,6 +2,7 @@
     <ul class="chat">
         
         <li class="left clearfix" v-for="message in messages">
+           
             <div class="chat-body clearfix" v-if="loginuser.id == message.user.id" align="right">
                 <div class="header">
                     <strong class="primary-font" >
@@ -9,6 +10,7 @@
                         {{ message.user.name }}
                     </strong>
                 </div>
+                
                 <p>
                     {{ message.message }}
                 </p>
